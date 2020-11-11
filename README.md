@@ -20,9 +20,11 @@ Install
 3. Copy the generated `_posixshmem*.so` file in the shared\_memory folder to your Python's lib-dynload path, 
    like `cp ./shared_memory/_posixshmem.cpython-37m-x86_64-linux-gnu.so ~/conda/envs/env_sample/lib/python3.7/lib-dynload`.
 
-4. Copy the shared\_memory folder which include the generated `_posixshmem*.so` file to your project directory.
+4. Copy the shared\_memory folder which include the generated `_posixshmem*.so` file to your project directory,
+   like `cp ./shared_numpy/shared_numpy/ ./your_project_home_directory`.
 
-5. Enjoy to use shared\_memory in Python3.6/3.7 like in Python3.8 .
+5. Enjoy to use shared\_memory in Python3.6/3.7 like in Python3.8 . Please pay attention to replace the 
+   `from multiprocessing import shared_memory` to `from shared_numpy import shared_memory`.
 
 Examples
 ---

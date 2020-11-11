@@ -30,7 +30,7 @@ _SHM_SAFE_NAME_LENGTH = 14
 
 # Shared memory block name prefix
 if _USE_POSIX:
-    _SHM_NAME_PREFIX = 'psm_'
+    _SHM_NAME_PREFIX = '/psm_'
 else:
     _SHM_NAME_PREFIX = 'wnsm_'
 
@@ -68,12 +68,15 @@ class SharedMemory:
     _buf = None
     _flags = os.O_RDWR
     _mode = 0o600
+    _prepend_leading_slash = True if _USE_POSIX else False
 
     def __init__(self, name=None, create=False, size=0):
         if not size >= 0:
             raise ValueError("'size' must be a positive integer")
         if create:
             self._flags = _O_CREX | os.O_RDWR
+            if size == 0:
+                raise ValueError("'size' must be a positive number different from zero")
         if name is None and not self._flags & os.O_EXCL:
             raise ValueError("'name' can only be None if create=True")
 
@@ -96,6 +99,7 @@ class SharedMemory:
                     self._name = name
                     break
             else:
+                name = "/" + name if self._prepend_leading_slash else name
                 self._fd = _posixshmem.shm_open(
                     name,
                     self._flags,
@@ -112,7 +116,8 @@ class SharedMemory:
             except OSError:
                 self.unlink()
                 raise
-
+            from multiprocessing.resource_tracker import register
+            register(self._name, "shared_memory")
         else:
 
             # Windows Named Shared Memory
@@ -226,8 +231,10 @@ class SharedMemory:
         In order to ensure proper cleanup of resources, unlink should be
         called once (and only once) across all processes which have access
         to the shared memory block."""
-        if _USE_POSIX and self.name:
-            _posixshmem.shm_unlink(self.name)
+        if _USE_POSIX and self._name:
+            from multiprocessing.resource_tracker import unregister
+            _posixshmem.shm_unlink(self._name)
+            unregister(self._name, "shared_memory")
 
 
 _encoding = "utf8"

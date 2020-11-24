@@ -18,7 +18,7 @@ Install
    like `cp resource_tracker.py /root/conda/envs/env_sample/lib/python3.7/multiprocessing/`.
 
 3. Copy the generated `_posixshmem*.so` file in the shared\_numpy subfolder to your Python's lib-dynload path, 
-   like `cp ./shared_memory/_posixshmem.cpython-37m-x86_64-linux-gnu.so ~/conda/envs/env_sample/lib/python3.7/lib-dynload`.
+   like `cp ./shared_numpy/_posixshmem.cpython-37m-x86_64-linux-gnu.so ~/conda/envs/env_sample/lib/python3.7/lib-dynload`.
 
 4. Copy the shared\_numpy subfolder which include the generated `_posixshmem*.so` file to your project directory,
    like `cp ./shared_numpy/shared_numpy/ ./your_project_home_directory`.
